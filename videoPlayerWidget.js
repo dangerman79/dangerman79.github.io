@@ -35,7 +35,7 @@ function CreateVideoPlayerWidgetObj ()
 		playbackRate.value = widget.data.playbackRate ;
 		controlsDiv.appendChild(playbackRate);
 		widget.playbackRateDom = playbackRate;
-		playbackRate.addEventListener("change", settingsChange.bind(event, widget));
+		playbackRate.addEventListener("change", chromaSettingsChange.bind(event, widget));
 		
 		
 		
@@ -73,13 +73,13 @@ function CreateVideoPlayerWidgetObj ()
 	
 	newWidget.changeMethod = function (widget) {
 
-		/*widget.sourceWidgets[0] = getWidgetById (widget.data.selectedDeviceIds[0])
+		/*widget.sourceWidget = getWidgetById (widget.data.selectedDeviceId)
 		
-		widget.canvasDom = widget.sourceWidgets[0].canvasDom;
+		widget.canvasDom = widget.sourceWidget.canvasDom;
 		var stream = widget.canvasDom.captureStream();
 		widget.vidwinDom.srcObject = stream;*/
 		widget.data.playbackRate = widget.playbackRateDom.value;
-		widget.vidwinDom.playbackRate = widget.data.playbackRate;
+		videoNode.playbackRate = widget.data.playbackRate;
 	}
 	
 	return newWidget;

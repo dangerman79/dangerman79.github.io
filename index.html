@@ -16,17 +16,14 @@
 <script src="backgroundMaskWidget.js"></script>
 <script src="videoOutWidget.js"></script>
 <script src="staccatoFilterWidget.js"></script>
-<script src="staccatoTrailsWidget.js"></script>
 <script src="differenceMaskWidget.js"></script>
 <script src="videoPlayerWidget.js"></script>
-<script src="colourFlattenWidget.js"></script>
-<script src="mixerWidget.js"></script>
-<script src="colourMapWidget.js"></script>
+<!--<script src="multiInputWidget.js"></script>-->
 </head>
 <body>
 	<div class="container">
 		<header>
-			<h2>GLFX 2</h2>
+			<h2>GLFX</h2>
 			<p>Video FX, in your Browser</p>
 		</header>
 		<div id="controls">
@@ -36,38 +33,17 @@
 				<input id="fileInput" type="file" name="files[]" style="display:none;"/>
 			  	<button id="loadSettings" type="button" onclick="loadSettingsClick();">Load Settings</button>
 			</ul>
-			<div id="widget_creators">
-			  <div class="widget_group">
-				<h4>Inputs</h4>
-				<div><button id="addWebcam" type="button" >Camera</button></div>
-			    <div><button id="addVideoFile" type="button" >Video Player</button></div>
-			  </div>
-			  
-			  <div class="widget_group">
-			  	<h4>Mixers</h4>
-				<div><button id="addMultiInput" type="button" >Widget Mixer</button></div></div>
-			  
-			  <div class="widget_group">
-				<h4>Masks</h4>
-				<div><button id="addChromaFilter" type = 'button'>Chroma Mask</button></div>
-				<div><button id="addBkMask" type = 'button'>Backround Mask</button></div>
-				<div><button id="addDiffMask" type = 'button'>Difference Mask</button></div>
-			  </div>
-			  
-			  <div class="widget_group">
-				<h4>Filters</h4>
-				<div><button id="addStaccatoFilter" type = 'button'>Staccato Filter</button></div>
-				<div><button id="addStaccatoTrails" type = 'button'>Staccato Trails</button></div>
-				<div><button id="addColourFlatten" type = 'button'>Colour Flatten</button></div>
-				<div><button id="addColourMap" type = 'button'>Colour Changer</button></div>
-			  </div>
-			  
-			  <div class="widget_group">
-				<h4>Outputs</h4>
-				<div><button id="addVideoOutput" type = 'button'>Video Output</button></div>
-			  </div>
-			  
-			</div>	
+			<ul>
+			  Add wigdets:
+			  <button id="addWebcam" type="button" >Camera</button>
+			  <button id="addVideoFile" type="button" >Video Player</button>
+			  <button id="addMultiInput" type="button" >Multi Input</button>
+			  <button id="addChromaFilter" type = 'button'>Chroma Mask</button>
+			  <button id="addBkMask" type = 'button'>Backround Mask</button>
+			  <button id="addDiffMask" type = 'button'>Difference Mask</button>
+			  <button id="addStaccatoFilter" type = 'button'>Staccato Filter</button>
+			  <button id="addVideoOutput" type = 'button'>Video Output</button>
+			</ul>		
 		</div>
 		<div id="main">
 			<!--this is where all the generated HTML goes -->
@@ -84,15 +60,10 @@
 	document.querySelector("#addWebcam").onclick = function(){createWidget('webcam');}
 	document.querySelector("#addChromaFilter").onclick = function(){createWidget('chromaMask');}
 	document.querySelector("#addStaccatoFilter").onclick = function(){createWidget('staccatoFilter');}
-	document.querySelector("#addStaccatoTrails").onclick = function(){createWidget('staccatoTrails');}
 	document.querySelector("#addVideoOutput").onclick = function(){createWidget('videoOutput');}
 	document.querySelector("#addBkMask").onclick = function(){createWidget('backroundMask');}
 	document.querySelector("#addDiffMask").onclick = function(){createWidget('diffMask');}
 	document.querySelector("#addVideoFile").onclick = function(){createWidget('videoPlayer');}
-	document.querySelector("#addColourFlatten").onclick = function(){createWidget('colourFlatten');}
-	document.querySelector("#addMultiInput").onclick = function(){createWidget('mixer');}
-	document.querySelector("#addColourMap").onclick = function(){createWidget('colourMap');}
-	
 	
 	function saveSettingsClick ()
 	{

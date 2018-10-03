@@ -26,7 +26,7 @@ function CreateStaccatoFilterWidgetObj ()
 		
 		newSelect = document.createElement('select');
 		controlsDiv.appendChild(newSelect);
-		newSelect.value = widget.data.selectedDeviceIds[0];
+		newSelect.value = widget.data.selectedDeviceId;
 		widget.widgetSelectors.push(newSelect);
 		widget.widgetSelectors.forEach (function(newSelect) {
 			newSelect.addEventListener("change", staccatoSettingsChange.bind(event, widget));
@@ -59,7 +59,7 @@ function CreateStaccatoFilterWidgetObj ()
 	
 	newWidget.changeMethod = function (widget) {
 		
-		widget.sourceWidgets[0] = getWidgetById (widget.data.selectedDeviceIds[0])
+		widget.sourceWidget = getWidgetById (widget.data.selectedDeviceId)
 		fps = widget.framesPerSampleDom.value
 		if(isNumeric(fps)){
 			widget.data.framesPerSample = Number(widget.framesPerSampleDom.value);
@@ -70,20 +70,20 @@ function CreateStaccatoFilterWidgetObj ()
 }
 function staccatoSettingsChange(widget, event)
 {	
-	widget.data.selectedDeviceIds[0] = widget.widgetSelectors[0].value
+	widget.data.selectedDeviceId = widget.widgetSelectors[0].value
 	widget.changeMethod(widget)
 }
 
 function applyStaccatoFilter(widget)
 {
-	if(widget.sourceWidgets[0] == null || widget.sourceWidgets[0].canvasDom == null ) return
+	if(widget.sourceWidget == null || widget.sourceWidget.canvasDom == null ) return
 	
 	
-	readContext = widget.sourceWidgets[0].canvasDom.getContext('2d')
+	readContext = widget.sourceWidget.canvasDom.getContext('2d')
 	writeContext = widget.canvasDom.getContext('2d')
 
-	width = widget.sourceWidgets[0].canvasDom.width;
-	height = widget.sourceWidgets[0].canvasDom.height;
+	width = widget.sourceWidget.canvasDom.width;
+	height = widget.sourceWidget.canvasDom.height;
 	
 	widget.canvasDom.width = width;
 	widget.canvasDom.height = height;
@@ -95,14 +95,15 @@ function applyStaccatoFilter(widget)
 	var imageDataOut =  writeContext.getImageData(0, 0, width, height);
 	outImData = imageDataOut.data	
 	
+	//copyImageData(imageDataIn, imageDataOut)
+	
 	
 		  // modify pixels applying a simple effect
 	for (var i = 0; i < inputImData.length; i+=4) {
 		r = inputImData[i]
 		g = inputImData[i + 1]
 		b = inputImData[i + 2]
-		a = inputImData[i + 3]
-		if(a == 0)
+		if(r == 0 && g == 255 && b == 255)
 		{
 			//masked pix
 			outImData[i] = widget.previousData[i];

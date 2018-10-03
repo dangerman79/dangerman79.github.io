@@ -28,10 +28,10 @@ function CreateChromaMaskWidgetObj ()
 		
 		newSelect = document.createElement('select');
 		controlsDiv.appendChild(newSelect);
-		newSelect.value = widget.data.selectedDeviceIds[0];
+		newSelect.value = widget.data.selectedDeviceId;
 		widget.widgetSelectors.push(newSelect);
 		widget.widgetSelectors.forEach (function(newSelect) {
-			newSelect.addEventListener("change", inputChange.bind(event, widget));
+			newSelect.addEventListener("change", chromaInputChange.bind(event, widget));
 		})
 		
 		newLabel = document.createElement('label');
@@ -43,7 +43,7 @@ function CreateChromaMaskWidgetObj ()
 		tolerance.value = widget.data.tolerance ;
 		controlsDiv.appendChild(tolerance);
 		widget.toleranceDom = tolerance;
-		tolerance.addEventListener("change", settingsChange.bind(event, widget));
+		tolerance.addEventListener("change", chromaSettingsChange.bind(event, widget));
 	
 		newLabel = document.createElement('label');
 		newLabel.innerHTML = 'Live Sampling:';
@@ -52,7 +52,7 @@ function CreateChromaMaskWidgetObj ()
 		newCheck = document.createElement('input');
 		newCheck.type = "checkbox"
 		controlsDiv.appendChild(newCheck);
-		newCheck.addEventListener("change", settingsChange.bind(event, widget));
+		newCheck.addEventListener("change", chromaSettingsChange.bind(event, widget));
 		controlsDiv.appendChild(newCheck);
 		widget.liveSampleDom = newCheck;
 		widget.liveSampleDom.checked = widget.data.liveSampling 
@@ -66,7 +66,7 @@ function CreateChromaMaskWidgetObj ()
 		controlsDiv.appendChild(showSamplePxCheck);
 		widget.samplePxDom = showSamplePxCheck;
 		widget.samplePxDom.checked = widget.data.showSamplePx
-		showSamplePxCheck.addEventListener("change", settingsChange.bind(event, widget));
+		showSamplePxCheck.addEventListener("change", chromaSettingsChange.bind(event, widget));
 	
 		newbutton = document.createElement('button');
 		newbutton.innerHTML = 'Delete last sample';
@@ -93,7 +93,7 @@ function CreateChromaMaskWidgetObj ()
 		requestAnimationFrame(draw.bind(event, widget));
 	}
 	newWidget.changeMethod = function (widget) {
-		widget.sourceWidgets[0] = getWidgetById (widget.data.selectedDeviceIds[0])
+		widget.sourceWidget = getWidgetById (widget.data.selectedDeviceId)
 		widget.data.showSamplePx = widget.samplePxDom.checked;
 		widget.data.liveSampling = widget.liveSampleDom.checked
 		tol = widget.toleranceDom.value //TODO check tol is loading correctly
@@ -108,13 +108,13 @@ function CreateChromaMaskWidgetObj ()
 
 function applyChromaMask(widget) 
 {	
-	if(widget.sourceWidgets[0] == null || widget.sourceWidgets[0].canvasDom == null ) return
+	if(widget.sourceWidget == null || widget.sourceWidget.canvasDom == null ) return
 	
-	readContext = widget.sourceWidgets[0].canvasDom.getContext('2d')
+	readContext = widget.sourceWidget.canvasDom.getContext('2d')
 	writeContext = widget.canvasDom.getContext('2d')
 
-	width = widget.sourceWidgets[0].canvasDom.width;
-	height = widget.sourceWidgets[0].canvasDom.height;
+	width = widget.sourceWidget.canvasDom.width;
+	height = widget.sourceWidget.canvasDom.height;
 	
 	widget.canvasDom.width = width;
 	widget.canvasDom.height = height;
@@ -147,7 +147,7 @@ function applyChromaMask(widget)
 			outImData[i] = 0;
 			outImData[i + 1] = 255;
 			outImData[i + 2] = 255;
-			outImData[i + 3] = 0;
+			outImData[i + 3] = 255;
 			
 		}else{
 			outImData[i] = r;
@@ -159,7 +159,6 @@ function applyChromaMask(widget)
 		// note: i+3 is the alpha channel, we are skipping that one
 	  }
 	  
-	  
 	if (widget.data.showSamplePx == true)
 	{
 	  widget.data.samplePx.forEach (function(px) 
@@ -170,13 +169,11 @@ function applyChromaMask(widget)
 			outImData[dataLoc] = 255;
 			outImData[dataLoc + 1] = 0;
 			outImData[dataLoc + 2] = 0;
-			outImData[dataLoc + 3] = 255;
 			
 			dataLoc = getPointLocationInData(px.x-q, px.y+q, width, height)
 			outImData[dataLoc] = 255;
 			outImData[dataLoc + 1] = 0;
 			outImData[dataLoc + 2] = 0;
-			outImData[dataLoc + 3] = 255;
 		  }
 	  })
 	}
@@ -187,10 +184,10 @@ function applyChromaMask(widget)
 
 function setChromaRangeFromSamples(widget)
 {
-	readContext = widget.sourceWidgets[0].canvasDom.getContext('2d')
+	readContext = widget.sourceWidget.canvasDom.getContext('2d')
 
-	width = widget.sourceWidgets[0].canvasDom.width;
-	height = widget.sourceWidgets[0].canvasDom.height;
+	width = widget.sourceWidget.canvasDom.width;
+	height = widget.sourceWidget.canvasDom.height;
 
 	
 	// read pixels
@@ -225,6 +222,18 @@ function setChromaRangeFromSamples(widget)
 
 }
 
+function chromaInputChange(widget, event)
+{
+	var newSrcStr = event.target.value;
+	widget.data.selectedDeviceId = newSrcStr;
+	widget.changeMethod(widget)
+}
+
+	
+function chromaSettingsChange(widget, event)
+{
+	widget.changeMethod(widget)
+}
 
 function addSamplePx(widget, event)
 {

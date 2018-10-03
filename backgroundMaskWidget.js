@@ -27,10 +27,10 @@ function CreateBackroundMaskWidgetObj ()
 		
 		newSelect = document.createElement('select');
 		controlsDiv.appendChild(newSelect);
-		newSelect.value = widget.data.selectedDeviceIds[0];
+		newSelect.value = widget.data.selectedDeviceId;
 		widget.widgetSelectors.push(newSelect);
 		widget.widgetSelectors.forEach (function(newSelect) {
-			newSelect.addEventListener("change", inputChange.bind(event, widget));
+			newSelect.addEventListener("change", chromaInputChange.bind(event, widget));
 		})
 				
 		newLabel = document.createElement('label');
@@ -42,7 +42,7 @@ function CreateBackroundMaskWidgetObj ()
 		tolerance.value = widget.data.tolerance ;
 		controlsDiv.appendChild(tolerance);
 		widget.toleranceDom = tolerance;
-		tolerance.addEventListener("change", settingsChange.bind(event, widget));
+		tolerance.addEventListener("change", chromaSettingsChange.bind(event, widget));
 		
 		newbutton = document.createElement('button');
 		newbutton.innerHTML = 'Sample Backround';
@@ -64,7 +64,7 @@ function CreateBackroundMaskWidgetObj ()
 	}		
 	
 	newWidget.changeMethod = function (widget) {
-		widget.sourceWidgets[0] = getWidgetById (widget.data.selectedDeviceIds[0])
+		widget.sourceWidget = getWidgetById (widget.data.selectedDeviceId)
 		tol = widget.toleranceDom.value //TODO check tol is loading correctly
 		if(isNumeric(tol)){
 			widget.data.tolerance = Number(widget.toleranceDom.value);
@@ -76,16 +76,16 @@ function CreateBackroundMaskWidgetObj ()
 
 function applyBkMask(widget) 
 {	
-	if(widget.sourceWidgets[0] == null || widget.sourceWidgets[0].canvasDom == null ) return
+	if(widget.sourceWidget == null || widget.sourceWidget.canvasDom == null ) return
 	if (widget.isSampling){
 		sampleBk(widget);
 		return
 	}
-	readContext = widget.sourceWidgets[0].canvasDom.getContext('2d')
+	readContext = widget.sourceWidget.canvasDom.getContext('2d')
 	writeContext = widget.canvasDom.getContext('2d')
 
-	width = widget.sourceWidgets[0].canvasDom.width;
-	height = widget.sourceWidgets[0].canvasDom.height;
+	width = widget.sourceWidget.canvasDom.width;
+	height = widget.sourceWidget.canvasDom.height;
 	
 	widget.canvasDom.width = width;
 	widget.canvasDom.height = height;
@@ -123,7 +123,7 @@ function applyBkMask(widget)
 			outImData[i] = 0;
 			outImData[i + 1] = 255;
 			outImData[i + 2] = 255;
-			outImData[i + 3] = 0;
+			outImData[i + 3] = 255;
 			
 		}else{
 			outImData[i] = r;
@@ -149,9 +149,9 @@ function sampleBkClick(widget, event)
 
 function sampleBk(widget)
 {
-	readContext = widget.sourceWidgets[0].canvasDom.getContext('2d')
-	width = widget.sourceWidgets[0].canvasDom.width;
-	height = widget.sourceWidgets[0].canvasDom.height;
+	readContext = widget.sourceWidget.canvasDom.getContext('2d')
+	width = widget.sourceWidget.canvasDom.width;
+	height = widget.sourceWidget.canvasDom.height;
 	
 	var imageDataIn = readContext.getImageData(0, 0, width, height);
 	inputImData = imageDataIn.data; // data is an array of pixels in RGBA

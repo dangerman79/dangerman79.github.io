@@ -28,13 +28,13 @@ function CreateDiffMaskWidgetObj ()
 		
 		newSelect = document.createElement('select');
 		controlsDiv.appendChild(newSelect);
-		newSelect.value = widget.data.selectedDeviceIds[0];
+		newSelect.value = widget.data.selectedDeviceId;
 		widget.widgetSelectors.push(newSelect);
 		widget.widgetSelectors.forEach (function(newSelect) {
-			newSelect.addEventListener("change", inputChange.bind(event, widget));
+			newSelect.addEventListener("change", chromaInputChange.bind(event, widget));
 		})
 		newLabel = document.createElement('label');
-		newLabel.innerHTML = 'Tolerance: ';
+		newLabel.innerHTML = 'Tolerance:';
 		controlsDiv.appendChild(newLabel);
 	
 		tolerance = document.createElement('input');
@@ -42,16 +42,16 @@ function CreateDiffMaskWidgetObj ()
 		tolerance.value = widget.data.tolerance ;
 		controlsDiv.appendChild(tolerance);
 		widget.toleranceDom = tolerance;
-		tolerance.addEventListener("change", settingsChange.bind(event, widget));
+		tolerance.addEventListener("change", chromaSettingsChange.bind(event, widget));
 		
 		newLabel = document.createElement('label');
-		newLabel.innerHTML = 'Frames Between Samples: ';
+		newLabel.innerHTML = 'Frames Between Samples:';
 		controlsDiv.appendChild(newLabel);
 	
 		framesPerSample = document.createElement('input');
 		framesPerSample.type = "text"
 		framesPerSample.value = widget.data.framesPerSample ;
-		framesPerSample.addEventListener("change", settingsChange.bind(event, widget));
+		framesPerSample.addEventListener("change", chromaSettingsChange.bind(event, widget));
 		controlsDiv.appendChild(framesPerSample);
 		widget.framesPerSampleDom = framesPerSample;
 		
@@ -69,7 +69,7 @@ function CreateDiffMaskWidgetObj ()
 		requestAnimationFrame(draw.bind(event, widget));
 
 		newWidget.changeMethod = function (widget) {
-			widget.sourceWidgets[0] = getWidgetById (widget.data.selectedDeviceIds[0])
+			widget.sourceWidget = getWidgetById (widget.data.selectedDeviceId)
 			tol = widget.toleranceDom.value //TODO check tol is loading correctly
 			if(isNumeric(tol)){
 				widget.data.tolerance = Number(widget.toleranceDom.value);
@@ -88,12 +88,12 @@ function CreateDiffMaskWidgetObj ()
 
 function applyDiffMask(widget) 
 {
-	if(widget.sourceWidgets[0] == null || widget.sourceWidgets[0].canvasDom == null ) return
-		readContext = widget.sourceWidgets[0].canvasDom.getContext('2d')
+	if(widget.sourceWidget == null || widget.sourceWidget.canvasDom == null ) return
+		readContext = widget.sourceWidget.canvasDom.getContext('2d')
 	writeContext = widget.canvasDom.getContext('2d')
 
-	width = widget.sourceWidgets[0].canvasDom.width;
-	height = widget.sourceWidgets[0].canvasDom.height;
+	width = widget.sourceWidget.canvasDom.width;
+	height = widget.sourceWidget.canvasDom.height;
 	
 	widget.canvasDom.width = width;
 	widget.canvasDom.height = height;
@@ -107,7 +107,7 @@ function applyDiffMask(widget)
 	
 	tol = widget.data.tolerance
 	
-	if (widget.lastIm.length == 0){widget.lastIm = copyImageRawData(inputImData, widget.lastIm)} //speedup possible here
+	if (widget.lastIm.length == 0){widget.lastIm = copyImageRawData(inputImData, widget.lastIm)}
 	for (var i = 0; i < inputImData.length; i+=4) {
 		r = inputImData[i]
 		g = inputImData[i + 1]
@@ -132,7 +132,7 @@ function applyDiffMask(widget)
 			outImData[i] = 0;
 			outImData[i + 1] = 255;
 			outImData[i + 2] = 255;
-			outImData[i + 3] = 0;
+			outImData[i + 3] = 255;
 			
 		}else{
 			outImData[i] = r;

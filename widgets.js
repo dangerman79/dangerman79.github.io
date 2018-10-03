@@ -4,39 +4,32 @@ function createWidget(type)
 		
 		switch(type) {
 			case 'webcam':
-				var widget = CreateCameraWidgetObj (type);	
+				var widget = CreateCameraWidgetObj ();
+				
+				
 			break;
-			case 'colourFlatten':
-				var widget = CreateColourFlattenWidgetObj (type);	
-			break
-			case 'mixer':
-				var widget = CreateMixerWidgetObj (type);
-			break
 			case 'chromaMask':
-				var widget = CreateChromaMaskWidgetObj (type);
+				var widget = CreateChromaMaskWidgetObj ();
+				
 			break;
 			case 'staccatoFilter':
-				var widget = CreateStaccatoFilterWidgetObj (type);
-			break;
-			case 'staccatoTrails':
-				var widget = CreateStaccatoTrailsWidgetObj (type);
+				var widget = CreateStaccatoFilterWidgetObj ();
 			break;
 			case 'videoOutput':
-				var widget = CreateVideoOutputWidgetObj (type);
-			break;
-			case 'videoPlayer':
-				var widget = CreateVideoPlayerWidgetObj (type);
-			break;
-			case 'backroundMask':
-				var widget = CreateBackroundMaskWidgetObj (type);
-			break;
-			case 'diffMask':
-				var widget = CreateDiffMaskWidgetObj (type);
-			break;
-			case 'colourMap':
-				var widget = CreateColourMapWidgetObj (type);
+				var widget = CreateVideoOutputWidgetObj ();
 			break;
 			
+			case 'videoPlayer':
+				var widget = CreateVideoPlayerWidgetObj ();
+			break;
+			
+			case 'backroundMask':
+				var widget = CreateBackroundMaskWidgetObj ();
+			break;
+			
+			case 'diffMask':
+				var widget = CreateDiffMaskWidgetObj ();
+			break;
 		}	
 		widgets.push(widget);
 		
@@ -99,9 +92,8 @@ function populateWidgetSelectors()
 
 	widgets.forEach (function(widget) 
 	{
-		for (var i = 0; i < widget.widgetSelectors.length; i++)
+		widget.widgetSelectors.forEach (function (selector)
 		{
-			selector = widget.widgetSelectors[i]
 			//remove current options from dropdown
 			while (selector.firstChild) {
 			  selector.removeChild(selector.firstChild);
@@ -116,24 +108,11 @@ function populateWidgetSelectors()
 				
 			})
 			
-			selector.value = widget.data.selectedDeviceIds[i];
-		}
+			selector.value = widget.data.selectedDeviceId;
+		})
 		
 	})
 }
 
-function inputChange(widget, event)
-{
-	//var newSrcStr = event.target.value;
-	for (var i = 0; i < widget.widgetSelectors.length; i++)
-	{
-		widget.data.selectedDeviceIds[i] = widget.widgetSelectors[i].value
-	}
-	//widget.data.selectedDeviceIds[0] = newSrcStr;
-	widget.changeMethod(widget)
-}
 
-function settingsChange(widget, event)
-{
-	widget.changeMethod(widget)
-}
+
